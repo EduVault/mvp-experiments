@@ -12,6 +12,20 @@ const googleStrat = new GoogleStrategy(
         });
         // console.log('user', user);
         if (user) {
+            if (!user.google) {
+                user.google.id = profile.id;
+                user.google.givenName = profile.name.givenName;
+                user.google.familyName = profile.name.familyName;
+                user.google.picture = profile.photos[0].value || null;
+                user.google.token = token;
+                user.save((err) => {
+                    if (err) {
+                        console.log(err);
+                        return done(err);
+                    }
+                    return done(null, user);
+                });
+            }
             return done(null, user);
         } else {
             const newUser = new User();

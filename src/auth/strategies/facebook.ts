@@ -6,12 +6,26 @@ const facebookStrat = new FacebookStrategy(
     FACEBOOK_CONFIG,
     async (ctx, token, refreshToken, profile, done) => {
         // console.log('===========ctx===========\n', ctx);
-        // console.log('===========profile===========\n', profile);
+        console.log('===========profile===========\n', profile);
         const email = profile.emails ? profile.emails[0].value.toLowerCase() || null : null;
         const user = await User.findOne({
             username: email || profile.id,
         });
         if (user) {
+            if (!user.facebook) {
+                user.facebook.id = profile.id;
+                user.facebook.givenName = profile.name.givenName;
+                user.facebook.familyName = profile.name.familyName;
+                user.facebook.picture = profile.photos[0].value || null;
+                user.facebook.token = token;
+                user.save((err) => {
+                    if (err) {
+                        console.log(err);
+                        return done(err);
+                    }
+                    return done(null, user);
+                });
+            }
             return done(null, user);
         } else {
             const newUser = new User();

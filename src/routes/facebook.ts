@@ -1,11 +1,9 @@
 import Router from 'koa-router';
 import * as KoaPassport from 'koa-passport';
-import { IUser } from '../models/user';
-import { DefaultState, Context } from 'koa';
-import { createJwt } from '../auth/strategies/jwt';
-import { ROUTES, CLIENT_CALLBACK } from '../utils/config';
-
 import url from 'url';
+import { DefaultState, Context } from 'koa';
+import { ROUTES, CLIENT_CALLBACK } from '../utils/config';
+import { IUser } from '../models/user';
 
 const faecbook = function (router: Router<DefaultState, Context>, passport: typeof KoaPassport) {
     router.get(
@@ -14,24 +12,21 @@ const faecbook = function (router: Router<DefaultState, Context>, passport: type
     );
 
     router.get(ROUTES.FACEBOOK_AUTH_CALLBACK, async (ctx, next) => {
-        return passport.authenticate('facebook', (err: string, user: IUser) => {
-            if (err) {
-                ctx.unauthorized(err, err);
-            } else {
-                ctx.redirect(
-                    url.format({
-                        pathname: ctx.request.header.referer
-                            ? ctx.request.header.referer + '/'
-                            : CLIENT_CALLBACK,
-                        query: {
-                            token: createJwt(user.username),
-                            username: user.username,
-                            _id: user.id,
-                        },
-                    }),
-                );
-            }
-        })(ctx, next);
+        try {
+            return passport.authenticate('facebook', async (err: string, user: IUser) => {
+                if (err) {
+                    console.log(err);
+                    ctx.unauthorized(err, err);
+                } else {
+                    console.log(user.facebook);
+                    await ctx.login(user);
+                    ctx.redirect(CLIENT_CALLBACK);
+                }
+            })(ctx, next);
+        } catch (err) {
+            console.log(err);
+            ctx.unauthorized(err, err);
+        }
     });
     return router;
 };

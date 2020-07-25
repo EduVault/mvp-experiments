@@ -1,25 +1,28 @@
-import connectDb from './mongo/mongoose';
+/** Provides nodejs access to a global Websocket value, required by Hub API */
+(global as any).WebSocket = require('isomorphic-ws');
 
 import koa from 'koa';
 import cors from '@koa/cors';
+import sslify, { xForwardedProtoResolver } from 'koa-sslify';
 import koaResponse from 'koa-response2';
 import logger from 'koa-logger';
 import bodyParser from 'koa-bodyparser';
 import helmet from 'koa-helmet';
+import websockify from 'koa-websocket';
 
+import connectDb from './mongo/mongoose';
 import passportInit from './auth/passportInit';
-
 import router from './routes';
-
+import userAuthRoute from './routes/wssUserAuthRoute';
 import { PORT } from './utils/config';
-import sslify, { xForwardedProtoResolver } from 'koa-sslify';
-const app = new koa();
+
+const app = websockify(new koa());
 
 /** Database */
 const db = connectDb();
 
 /** Middlewares */
-app.use(cors());
+app.use(cors({ credentials: true }));
 if (process.env.NODE_ENV === 'production') app.use(sslify({ resolver: xForwardedProtoResolver }));
 app.use(logger());
 app.use(bodyParser());
@@ -42,5 +45,7 @@ const passport = passportInit(app);
 /** Routes */
 router(app, passport);
 
+/** Websockets */
+// app.ws.use(userAuthRoute);
 /** Start the server! */
 app.listen(PORT, () => console.log(`Koa server listening on PORT ${PORT}`));

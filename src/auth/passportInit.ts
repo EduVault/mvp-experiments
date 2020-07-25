@@ -2,9 +2,8 @@ import passport from 'koa-passport';
 import Koa from 'koa';
 import session from 'koa-session';
 import User, { IUser } from '../models/user';
-import { APP_SECRET } from '../utils/config';
+import { APP_SECRET, SESSION_OPTIONS } from '../utils/config';
 import localStrat from './strategies/local';
-import jwtStrat from './strategies/jwt';
 import googleStrat from './strategies/google';
 import facebookStrat from './strategies/facebook';
 
@@ -13,7 +12,7 @@ export default (app: Koa) => {
      * remember to also ad  { session: false } to each passport.authenticate call if you don't want session on that
      */
     app.keys = [APP_SECRET];
-    app.use(session(null, app));
+    app.use(session(SESSION_OPTIONS, app));
     passport.serializeUser(function (user: IUser, done) {
         done(null, user._id);
     });
@@ -26,7 +25,6 @@ export default (app: Koa) => {
 
     /** Our strategies here: */
     passport.use(localStrat);
-    passport.use(jwtStrat);
     passport.use(googleStrat);
     passport.use(facebookStrat);
     /** Boilerplate */

@@ -2,6 +2,8 @@ import dotenv from 'dotenv';
 import { StrategyOptionsWithRequest } from 'passport-google-oauth20';
 import { StrategyOptionWithRequest } from 'passport-facebook';
 import passportJwt from 'passport-jwt';
+import session from 'koa-session';
+
 const ExtractJwt = passportJwt.ExtractJwt;
 
 dotenv.config({ path: './.env.local' }); // If the .env file is not just .env, you need this config
@@ -13,16 +15,36 @@ const MONGO_URI = process.env.MONGODB_URI || 'mongodb://mongo:27017';
 const ROOT_URL = process.env.NODE_ENV === 'production' ? process.env.ROOT_URL : 'localhost:' + PORT;
 const APP_SECRET = process.env.APP_SECRET || 'secretString!%@#$@%';
 /** expressed in seconds or a string describing a time span zeit/ms. Eg: 60, "2 days", "10h", "7d" */
-const JWT_EXPIRY = '1h';
+const JWT_EXPIRY = '1d';
 const JWT_OPTIONS = {
     secretOrKey: APP_SECRET,
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-};
+} as passportJwt.StrategyOptions;
 /** Sometimes the callback cannot find the referer, In a real setup, we might need apps that use this backend to register a callback */
+
+const SESSION_OPTIONS = {
+    key: 'koa.sess' /** (string) cookie key (default is koa.sess) */,
+    /** (number || 'session') maxAge in ms (default is 1 days) */
+    /** 'session' will result in a cookie that expires when session/browser is closed */
+    /** Warning: If a session cookie is stolen, this cookie will never expire */
+    maxAge: 1000 * 60 * 60 * 48 /** 48 hours*/,
+    autoCommit: true /** (boolean) automatically commit headers (default true) */,
+    overwrite: true /** (boolean) can overwrite or not (default true) */,
+    httpOnly:
+        process.env.NODE_ENV === 'production'
+            ? true
+            : false /** (boolean) httpOnly or not (default true) */,
+    signed: true /** (boolean) signed or not (default true) */,
+    rolling: true /** (boolean) Force a session identifier cookie to be set on every response. The expiration is reset to the original maxAge, resetting the expiration countdown. (default is false) */,
+    renew: false /** (boolean) renew session when session is nearly expired, so we can always keep user logged in. (default is false)*/,
+    secure: process.env.NODE_ENV === 'production' ? true : false /** (boolean) secure cookie*/,
+    sameSite: null /** (string) session cookie sameSite options (default null, don't set it) */,
+} as Partial<session.opts>;
+
 const CLIENT_CALLBACK =
     process.env.NODE_ENV === 'production'
         ? 'https://optimistic-torvalds-74fc0d.netlify.app'
-        : 'http://localhost:8080/login/';
+        : 'http://localhost:8080/home/';
 
 const ROUTES = {
     FACEBOOK_AUTH: '/auth/facebook',
@@ -32,6 +54,7 @@ const ROUTES = {
     LOCAL_SIGNUP: '/auth/local-signup',
     LOCAL_LOGIN: '/auth/local-login',
     VERIFY_JWT: '/verify-jwt',
+    TEXTILE_RENEW: '/renew-textile',
 };
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
@@ -54,6 +77,10 @@ const FACEBOOK_CONFIG = {
     passReqToCallback: true,
 } as StrategyOptionWithRequest;
 
+/** Textile */
+const TEXTILE_USER_API_KEY = process.env.TEXTILE_USER_API_KEY;
+const TEXTILE_USER_API_SECRET = process.env.TEXTILE_USER_API_SECRET;
+const TEXTILE_API = process.env.TEXTILE_API;
 export {
     PORT,
     MONGO_URI,
@@ -61,8 +88,12 @@ export {
     APP_SECRET,
     JWT_EXPIRY,
     JWT_OPTIONS,
+    SESSION_OPTIONS,
     ROUTES,
     GOOGLE_CONFIG,
     FACEBOOK_CONFIG,
     CLIENT_CALLBACK,
+    TEXTILE_USER_API_KEY,
+    TEXTILE_USER_API_SECRET,
+    TEXTILE_API,
 };

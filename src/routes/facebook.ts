@@ -18,7 +18,7 @@ const faecbook = function (router: Router<DefaultState, Context>, passport: type
                     console.log(err);
                     ctx.unauthorized(err, err);
                 } else {
-                    console.log(user.facebook);
+                    // console.log(user.facebook);
                     await ctx.login(user);
                     ctx.redirect(CLIENT_CALLBACK);
                 }

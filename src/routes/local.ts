@@ -17,10 +17,13 @@ const local = function (router: Router<DefaultState, Context>, passport: typeof 
             const newUser = new User();
             newUser.username = username;
             newUser.password = hashPassword(ctx.request.body.password);
+            newUser.encryptedKeyPair = ctx.request.body.encryptedKeyPair;
+            newUser.pubKey = ctx.request.body.pubKey;
+            console.log('ctx.request.body', ctx.request.body);
             newUser.save();
             await ctx.login(newUser);
             await ctx.session.save();
-            ctx.oK();
+            ctx.oK({ encryptedKeyPair: newUser.encryptedKeyPair }, null);
         } catch (err) {
             console.log(err);
             ctx.internalServerError(err, err.toString());
@@ -29,11 +32,11 @@ const local = function (router: Router<DefaultState, Context>, passport: typeof 
     router.post(ROUTES.LOCAL_LOGIN, async (ctx, next) => {
         return passport.authenticate('local', async (err: string, user: IUser) => {
             if (err) {
-                ctx.unauthorized(err, err);
+                ctx.unauthorized(err, 'unauthorized');
             } else {
                 await ctx.login(user);
                 await ctx.session.save();
-                ctx.oK();
+                ctx.oK({ encryptedKeyPair: user.encryptedKeyPair }, null);
             }
         })(ctx, next);
     });

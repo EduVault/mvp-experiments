@@ -1,6 +1,6 @@
 /** Provides nodejs access to a global Websocket value, required by Hub API */
 (global as any).WebSocket = require('isomorphic-ws');
-
+import mongoose from 'mongoose';
 import koa from 'koa';
 import cors from '@koa/cors';
 import sslify, { xForwardedProtoResolver } from 'koa-sslify';
@@ -16,11 +16,14 @@ import router from './routes';
 import userAuthRoute from './routes/wssUserAuthRoute';
 import { PORT } from './utils/config';
 
-const app = websockify(new koa());
-
+// const app = websockify(new koa());
+const app = new koa();
 /** Database */
 const db = connectDb();
-
+// mongoose.connection.collections['user'].drop(function (err) {
+//     console.log('collection dropped');
+// });
+// db.dropDatabase();
 /** Middlewares */
 app.use(cors({ credentials: true }));
 if (process.env.NODE_ENV === 'production') app.use(sslify({ resolver: xForwardedProtoResolver }));

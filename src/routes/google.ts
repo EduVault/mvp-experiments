@@ -18,8 +18,6 @@ const google = function (router: Router<DefaultState, Context>, passport: typeof
                 ctx.unauthorized(err, err);
             } else {
                 ctx.login(user);
-                const koaCookie = ctx.cookies.get('koa.sess');
-                console.log(koaCookie);
                 ctx.redirect(CLIENT_CALLBACK);
             }
         })(ctx, next);

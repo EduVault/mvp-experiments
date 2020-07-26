@@ -4,9 +4,8 @@ import * as bCrypt from 'bcrypt-nodejs';
 /** @param username will be an email for local scheme, for google and facebook will be email if available or id if not */
 export interface IUser extends Document {
     username: string;
-    authType: 'google' | 'facebook' | 'password' | null;
     password?: string;
-    privKeyHash?: string;
+    encryptedKeyPair?: string;
     pubKey?: string;
     facebook: SocialMediaAccount;
     google: SocialMediaAccount;
@@ -26,9 +25,8 @@ because we don't use them in all situations. So we should manually check if thes
 const UserSchema = new Schema(
     {
         username: { type: String, unique: true, required: false },
-        authType: { type: String, unique: false, required: false },
         password: { type: String, unique: false, required: false },
-        privKeyHash: { type: String, unique: false, required: false },
+        encryptedKeyPair: { type: String, unique: false, required: false },
         pubKey: { type: String, unique: false, required: false },
         google: {
             id: { type: String, unique: false, required: false },

@@ -3,8 +3,8 @@ import * as KoaPassport from 'koa-passport';
 import User, { IUser, hashPassword } from '../models/user';
 import { DefaultState, Context } from 'koa';
 import { PasswordRes } from '../types';
-import { ROUTES, CLIENT_CALLBACK } from '../utils/config';
-
+import { ROUTES, CLIENT_CALLBACK, APP_SECRET, JWT_EXPIRY } from '../utils/config';
+import { createJwt, validateJwt } from '../utils/jwt';
 const local = function (router: Router<DefaultState, Context>, passport: typeof KoaPassport) {
     router.post(ROUTES.LOCAL_SIGNUP, async (ctx) => {
         try {
@@ -22,8 +22,16 @@ const local = function (router: Router<DefaultState, Context>, passport: typeof 
             console.log('ctx.request.body', ctx.request.body);
             newUser.save();
             await ctx.login(newUser);
+            ctx.session.jwt = createJwt(newUser.username);
             await ctx.session.save();
-            ctx.oK({ encryptedKeyPair: newUser.encryptedKeyPair }, null);
+            ctx.oK(
+                {
+                    encryptedKeyPair: newUser.encryptedKeyPair,
+                    jwt: ctx.session.jwt,
+                    pubKey: newUser.pubKey,
+                },
+                null,
+            );
         } catch (err) {
             console.log(err);
             ctx.internalServerError(err, err.toString());
@@ -35,8 +43,16 @@ const local = function (router: Router<DefaultState, Context>, passport: typeof 
                 ctx.unauthorized(err, 'unauthorized');
             } else {
                 await ctx.login(user);
+                ctx.session.jwt = createJwt(user.username);
                 await ctx.session.save();
-                ctx.oK({ encryptedKeyPair: user.encryptedKeyPair }, null);
+                ctx.oK(
+                    {
+                        encryptedKeyPair: user.encryptedKeyPair,
+                        jwt: ctx.session.jwt,
+                        pubKey: user.pubKey,
+                    },
+                    null,
+                );
             }
         })(ctx, next);
     });

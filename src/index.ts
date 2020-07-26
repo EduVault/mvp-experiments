@@ -1,7 +1,7 @@
 /** Provides nodejs access to a global Websocket value, required by Hub API */
 (global as any).WebSocket = require('isomorphic-ws');
 import mongoose from 'mongoose';
-import koa from 'koa';
+import Koa from 'koa';
 import cors from '@koa/cors';
 import sslify, { xForwardedProtoResolver } from 'koa-sslify';
 import koaResponse from 'koa-response2';
@@ -12,12 +12,12 @@ import websockify from 'koa-websocket';
 
 import connectDb from './mongo/mongoose';
 import passportInit from './auth/passportInit';
-import router from './routes';
+import startRouter from './routes';
 import userAuthRoute from './routes/wssUserAuthRoute';
 import { PORT } from './utils/config';
 
-// const app = websockify(new koa());
-const app = new koa();
+const app = websockify(new Koa());
+// const app = new koa();
 /** Database */
 const db = connectDb();
 // mongoose.connection.collections['user'].drop(function (err) {
@@ -46,9 +46,8 @@ app.use(
 const passport = passportInit(app);
 
 /** Routes */
-router(app, passport);
-
+const router = startRouter(app, passport);
 /** Websockets */
-// app.ws.use(userAuthRoute);
+userAuthRoute(app);
 /** Start the server! */
 app.listen(PORT, () => console.log(`Koa server listening on PORT ${PORT}`));

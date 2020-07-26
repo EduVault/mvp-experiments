@@ -14,13 +14,9 @@ const PORT = parseInt(process.env.PORT, 10) || 3000;
 const MONGO_URI = process.env.MONGODB_URI || 'mongodb://mongo:27017';
 const ROOT_URL = process.env.NODE_ENV === 'production' ? process.env.ROOT_URL : 'localhost:' + PORT;
 const APP_SECRET = process.env.APP_SECRET || 'secretString!%@#$@%';
+
 /** expressed in seconds or a string describing a time span zeit/ms. Eg: 60, "2 days", "10h", "7d" */
-const JWT_EXPIRY = '1d';
-const JWT_OPTIONS = {
-    secretOrKey: APP_SECRET,
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-} as passportJwt.StrategyOptions;
-/** Sometimes the callback cannot find the referer, In a real setup, we might need apps that use this backend to register a callback */
+const JWT_EXPIRY = '30d';
 
 const SESSION_OPTIONS = {
     key: 'koa.sess' /** (string) cookie key (default is koa.sess) */,
@@ -41,6 +37,7 @@ const SESSION_OPTIONS = {
     sameSite: null /** (string) session cookie sameSite options (default null, don't set it) */,
 } as Partial<session.opts>;
 
+/** Sometimes the callback cannot find the referer, In a real setup, we might need apps that use this backend to register a callback */
 const CLIENT_CALLBACK =
     process.env.NODE_ENV === 'production'
         ? 'https://optimistic-torvalds-74fc0d.netlify.app'
@@ -87,7 +84,6 @@ export {
     ROOT_URL,
     APP_SECRET,
     JWT_EXPIRY,
-    JWT_OPTIONS,
     SESSION_OPTIONS,
     ROUTES,
     GOOGLE_CONFIG,

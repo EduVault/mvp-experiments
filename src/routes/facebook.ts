@@ -12,21 +12,16 @@ const faecbook = function (router: Router<DefaultState, Context>, passport: type
     );
 
     router.get(ROUTES.FACEBOOK_AUTH_CALLBACK, async (ctx, next) => {
-        try {
-            return passport.authenticate('facebook', async (err: string, user: IUser) => {
-                if (err) {
-                    console.log(err);
-                    ctx.unauthorized(err, err);
-                } else {
-                    // console.log(user.facebook);
-                    await ctx.login(user);
-                    ctx.redirect(CLIENT_CALLBACK);
-                }
-            })(ctx, next);
-        } catch (err) {
-            console.log(err);
-            ctx.unauthorized(err, err);
-        }
+        return passport.authenticate('facebook', async (err: string, user: IUser) => {
+            if (err) {
+                console.log(err);
+                ctx.unauthorized(err, err);
+            } else {
+                // console.log(user.facebook);
+                await ctx.login(user);
+                ctx.redirect(CLIENT_CALLBACK);
+            }
+        })(ctx, next);
     });
     return router;
 };

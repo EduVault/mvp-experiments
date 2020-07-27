@@ -24,7 +24,15 @@ const db = connectDb();
 //     console.log('collection dropped');
 // });
 // db.dropDatabase();
+
 /** Middlewares */
+app.use(async function handleGeneralError(ctx, next) {
+    try {
+        await next();
+    } catch (error) {
+        ctx.internalServerError(error, error);
+    }
+});
 app.use(cors({ credentials: true }));
 if (process.env.NODE_ENV === 'production') app.use(sslify({ resolver: xForwardedProtoResolver }));
 app.use(logger());

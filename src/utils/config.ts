@@ -12,7 +12,8 @@ dotenv.config({ path: './.env.local' }); // If the .env file is not just .env, y
 const PORT = parseInt(process.env.PORT, 10) || 3000;
 /** for dev, needs to match service name from docker-compose file. if hosting on heroku MONGO_URI will be an env, if not you need to manually create one*/
 const MONGO_URI = process.env.MONGODB_URI || 'mongodb://mongo:27017';
-const ROOT_URL = process.env.NODE_ENV === 'production' ? process.env.ROOT_URL : 'localhost:' + PORT;
+const ROOT_URL =
+    process.env.NODE_ENV === 'production' ? 'https://eduvault.herokuapp.com' : 'localhost:' + PORT;
 const APP_SECRET = process.env.APP_SECRET || 'secretString!%@#$@%';
 
 /** expressed in seconds or a string describing a time span zeit/ms. Eg: 60, "2 days", "10h", "7d" */
@@ -77,7 +78,8 @@ const FACEBOOK_CONFIG = {
 /** Textile */
 const TEXTILE_USER_API_KEY = process.env.TEXTILE_USER_API_KEY;
 const TEXTILE_USER_API_SECRET = process.env.TEXTILE_USER_API_SECRET;
-const TEXTILE_API = process.env.TEXTILE_API;
+const TEXTILE_API = 'https://api.textile.io:3447';
+
 export {
     PORT,
     MONGO_URI,

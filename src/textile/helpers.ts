@@ -16,8 +16,16 @@ const newClientDB = async () => {
 
 /** @param seconds (300) time until the sig expires */
 const getAPISig = async (seconds: number = 300) => {
-    const expiration = new Date(Date.now() + 1000 * seconds);
-    return await createAPISig(TEXTILE_USER_API_KEY, expiration);
+    try {
+        await console.log('getting API sig');
+        const expiration = await new Date(Date.now() + 1000 * seconds);
+        console.log('expiration', expiration);
+        const signature = await createAPISig(TEXTILE_USER_API_KEY, expiration);
+        return signature;
+    } catch (err) {
+        console.log(err.message);
+        throw err;
+    }
 };
 
 const localChallengHandler = (id: Libp2pCryptoIdentity) => {

@@ -1,5 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
+
 import * as bCrypt from 'bcrypt-nodejs';
+import { ThreadID } from '@textile/hub';
 
 /** @param username will be an email for local scheme, for google and facebook will be email if available or id if not */
 export interface IUser extends Document {
@@ -7,8 +9,10 @@ export interface IUser extends Document {
     password?: string;
     encryptedKeyPair?: string;
     pubKey?: string;
-    facebook: SocialMediaAccount;
-    google: SocialMediaAccount;
+    threadIDStr?: string;
+    DbInfo?: string;
+    facebook?: SocialMediaAccount;
+    google?: SocialMediaAccount;
 }
 interface SocialMediaAccount {
     id?: string;
@@ -28,6 +32,8 @@ const UserSchema = new Schema(
         password: { type: String, unique: false, required: false },
         encryptedKeyPair: { type: String, unique: false, required: false },
         pubKey: { type: String, unique: false, required: false },
+        threadIDStr: { type: String, unique: false, required: false },
+        DbInfo: { type: String, unique: false, required: false },
         google: {
             id: { type: String, unique: false, required: false },
             token: { type: String, unique: false, required: false },

@@ -8,6 +8,7 @@ import facebook from './facebook';
 import google from './google';
 import { DefaultState, Context, Middleware } from 'koa';
 import { CLIENT_CALLBACK } from '../utils/config';
+import getUser from '../utils/getUserFromSession';
 
 const startRouter = (
     app: websockify.App<Koa.DefaultState, Koa.DefaultContext>,
@@ -18,15 +19,19 @@ const startRouter = (
         ctx.oK(null, 'pong!');
     });
     const checkAuth: Middleware = (ctx, next) => {
+        console.log('cookie', ctx.cookie);
+        console.log('session', ctx.session.toJSON());
         if (!ctx.isAuthenticated()) {
             ctx.unauthorized(null, 'unautharized');
         } else {
             return next();
         }
     };
-    router.get('/get-jwt', checkAuth, (ctx) => {
-        console.log('session', ctx.session.toJSON());
-        ctx.oK({ jwt: ctx.session.jwt }, 'ok');
+    router.get('/get-user', checkAuth, async (ctx) => {
+        const user = await getUser(ctx.session.toJSON());
+        if (!user) ctx.internalServerError('user not found');
+        // console.log(user);
+        ctx.oK({ jwt: ctx.session.jwt, ...user });
     });
     router.get('/logout', async (ctx) => {
         ctx.session = null;
@@ -36,7 +41,24 @@ const startRouter = (
     router.get('/auth-check', checkAuth, (ctx) => {
         ctx.oK(null, 'ok');
     });
-
+    router.post('/save-thread-id', checkAuth, async (ctx) => {
+        const user = await getUser(ctx.session.toJSON());
+        if (!user) ctx.internalServerError('user not found');
+        // console.log(user);
+        if (user.threadIDStr) ctx.oK({ threadIDStr: user.threadIDStr, exists: true });
+        user.threadIDStr = ctx.request.body.threadIDStr;
+        await user.save();
+        ctx.oK({ threadIDStr: user.threadIDStr });
+    });
+    router.post('/upload-db-info', checkAuth, async (ctx) => {
+        const user = await getUser(ctx.session.toJSON());
+        if (!user) ctx.internalServerError('user not found');
+        // console.log(user);
+        if (user.DbInfo) ctx.oK({ DbInfo: user.DbInfo, exists: true });
+        user.DbInfo = ctx.request.body.DbInfo;
+        await user.save();
+        ctx.oK({ DbInfo: user.DbInfo });
+    });
     local(router, passport);
     facebook(router, passport);
     google(router, passport);

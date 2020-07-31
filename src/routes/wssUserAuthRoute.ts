@@ -37,6 +37,7 @@ const userAuthRoute = (app: websockify.App<Koa.DefaultState, Koa.DefaultContext>
                     throw new Error('missing jwt');
                 }
                 const jwtCheck = await validateJwt(data.jwt);
+                console.log('jwtCheck', jwtCheck);
                 if (!jwtCheck || !jwtCheck.pubKey || !jwtCheck.username) {
                     throw new Error('invalid jwt');
                 }
@@ -60,18 +61,20 @@ const userAuthRoute = (app: websockify.App<Koa.DefaultState, Koa.DefaultContext>
                                     ctx.websocket.send(JSON.stringify(response));
                                     /** Wait for the challenge event from our event emitter */
                                     emitter.on('challenge-response', (signature) => {
+                                        // console.log('challenge-response signature', signature);
                                         resolve(Buffer.from(signature));
                                     });
-                                    /** Give client a reasonable timeout to respond to the challenge */
                                     setTimeout(() => {
+                                        console.log('client took too long to respond');
                                         reject();
-                                    }, 1500);
+                                    }, 5000);
                                 });
                             },
                         );
                         /**
                          * The challenge was successfully completed by the client
                          */
+                        console.log('challenge completed');
                         const apiSig = await getAPISig();
                         const userAuth: UserAuth = {
                             ...apiSig,
@@ -91,10 +94,9 @@ const userAuthRoute = (app: websockify.App<Koa.DefaultState, Koa.DefaultContext>
                      */
                     case 'challenge-response': {
                         if (!data.signature) {
-                            throw new Error('missing signature (sig)');
+                            throw new Error('missing signature');
                         }
-                        // could be multiple users trying to authenticate at once. We only handle the one related to the previous call.
-                        // if (data.username === user.username) //not right, check though
+                        console.log('got signature response');
                         await emitter.emit('challenge-response', data.signature);
                         break;
                     }

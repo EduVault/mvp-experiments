@@ -3,6 +3,7 @@
 import mongoose from 'mongoose';
 import Koa from 'koa';
 import cors from '@koa/cors';
+import cookie from 'koa-cookie';
 import sslify, { xForwardedProtoResolver } from 'koa-sslify';
 import koaResponse from 'koa-response2';
 import logger from 'koa-logger';
@@ -23,6 +24,7 @@ const db = connectDb();
 // mongoose.connection.collections['user'].drop(function (err) {
 //     console.log('collection dropped');
 // });
+
 // db.dropDatabase();
 
 /** Middlewares */
@@ -35,6 +37,7 @@ app.use(async function handleGeneralError(ctx, next) {
 });
 app.use(cors({ credentials: true }));
 if (process.env.NODE_ENV === 'production') app.use(sslify({ resolver: xForwardedProtoResolver }));
+app.use(cookie());
 app.use(logger());
 app.use(bodyParser());
 app.use(helmet());

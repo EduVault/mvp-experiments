@@ -18,6 +18,7 @@ const local = function (router: Router<DefaultState, Context>, passport: typeof 
         newUser.password = hashPassword(ctx.request.body.password);
         newUser.encryptedKeyPair = ctx.request.body.encryptedKeyPair;
         newUser.pubKey = ctx.request.body.pubKey;
+        newUser.threadIDStr = ctx.request.body.threadIDStr;
         console.log('ctx.request.body', ctx.request.body);
         newUser.save();
         await ctx.login(newUser);
@@ -28,6 +29,7 @@ const local = function (router: Router<DefaultState, Context>, passport: typeof 
                 encryptedKeyPair: newUser.encryptedKeyPair,
                 jwt: ctx.session.jwt,
                 pubKey: newUser.pubKey,
+                threadIDStr: newUser.threadIDStr,
             },
             null,
         );
@@ -35,7 +37,7 @@ const local = function (router: Router<DefaultState, Context>, passport: typeof 
     router.post(ROUTES.LOCAL_LOGIN, async (ctx, next) => {
         return passport.authenticate('local', async (err: string, user: IUser) => {
             if (err) {
-                ctx.unauthorized(err, 'unauthorized');
+                ctx.unauthorized(err, err);
             } else {
                 await ctx.login(user);
                 ctx.session.jwt = createJwt(user.username);
@@ -45,6 +47,7 @@ const local = function (router: Router<DefaultState, Context>, passport: typeof 
                         encryptedKeyPair: user.encryptedKeyPair,
                         jwt: ctx.session.jwt,
                         pubKey: user.pubKey,
+                        threadIDStr: user.threadIDStr,
                     },
                     null,
                 );

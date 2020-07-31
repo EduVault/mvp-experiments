@@ -15,7 +15,7 @@ import connectDb from './mongo/mongoose';
 import passportInit from './auth/passportInit';
 import startRouter from './routes';
 import userAuthRoute from './routes/wssUserAuthRoute';
-import { PORT } from './utils/config';
+import { PORT, CORS_CONFIG } from './utils/config';
 
 const app = websockify(new Koa());
 // const app = new koa();
@@ -35,7 +35,7 @@ app.use(async function handleGeneralError(ctx, next) {
         ctx.internalServerError(error, error);
     }
 });
-app.use(cors({ credentials: true }));
+app.use(cors(CORS_CONFIG));
 if (process.env.NODE_ENV === 'production') app.use(sslify({ resolver: xForwardedProtoResolver }));
 app.use(cookie());
 app.use(logger());

@@ -3,6 +3,8 @@ import { StrategyOptionsWithRequest } from 'passport-google-oauth20';
 import { StrategyOptionWithRequest } from 'passport-facebook';
 import passportJwt from 'passport-jwt';
 import session from 'koa-session';
+import cors from '@koa/cors';
+import Koa from 'koa';
 
 const ExtractJwt = passportJwt.ExtractJwt;
 
@@ -14,6 +16,17 @@ const PORT = parseInt(process.env.PORT, 10) || 3000;
 const MONGO_URI = process.env.MONGODB_URI || 'mongodb://mongo:27017';
 const ROOT_URL =
     process.env.NODE_ENV === 'production' ? 'https://eduvault.herokuapp.com' : 'localhost:' + PORT;
+
+const CORS_CONFIG: cors.Options = {
+    credentials: true,
+    origin: (ctx) => {
+        const validDomains = ['thirsty-ardinghelli-577c63.netlify.app'];
+        if (validDomains.indexOf(ctx.request.header.origin) !== -1) {
+            return ctx.request.header.origin;
+        }
+        return validDomains[0]; // we can't return void, so let's return one of the valid domains
+    },
+};
 const APP_SECRET = process.env.APP_SECRET || 'secretString!%@#$@%';
 
 /** expressed in seconds or a string describing a time span zeit/ms. Eg: 60, "2 days", "10h", "7d" */
@@ -84,6 +97,7 @@ export {
     PORT,
     MONGO_URI,
     ROOT_URL,
+    CORS_CONFIG,
     APP_SECRET,
     JWT_EXPIRY,
     SESSION_OPTIONS,

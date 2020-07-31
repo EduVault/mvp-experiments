@@ -36,7 +36,7 @@ app.use(async function handleGeneralError(ctx, next) {
     }
 });
 app.use(cors(CORS_CONFIG));
-// if (process.env.NODE_ENV === 'production') app.use(sslify({ resolver: xForwardedProtoResolver }));
+if (process.env.NODE_ENV === 'production') app.use(sslify({ resolver: xForwardedProtoResolver }));
 app.use(cookie());
 app.use(logger());
 app.use(bodyParser());

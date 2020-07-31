@@ -20,6 +20,10 @@ const ROOT_URL =
 const CORS_CONFIG: cors.Options = {
     credentials: true,
     origin: (ctx) => {
+        console.log(
+            '===================================ctx.request.header.origin===================================',
+            ctx.request.header.origin,
+        );
         const validDomains = ['thirsty-ardinghelli-577c63.netlify.app'];
         if (validDomains.indexOf(ctx.request.header.origin) !== -1) {
             return ctx.request.header.origin;

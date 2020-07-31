@@ -24,7 +24,10 @@ const CORS_CONFIG: cors.Options = {
             '===================================ctx.request.header.origin===================================',
             ctx.request.header.origin,
         );
-        const validDomains = ['thirsty-ardinghelli-577c63.netlify.app'];
+        const validDomains = [
+            'https://master--thirsty-ardinghelli-577c63.netlify.app',
+            'https://thirsty-ardinghelli-577c63.netlify.app',
+        ];
         if (validDomains.indexOf(ctx.request.header.origin) !== -1) {
             return ctx.request.header.origin;
         }

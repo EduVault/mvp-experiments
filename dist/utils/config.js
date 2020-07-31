@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TEXTILE_API = exports.TEXTILE_USER_API_SECRET = exports.TEXTILE_USER_API_KEY = exports.CLIENT_CALLBACK = exports.FACEBOOK_CONFIG = exports.GOOGLE_CONFIG = exports.ROUTES = exports.SESSION_OPTIONS = exports.JWT_EXPIRY = exports.APP_SECRET = exports.ROOT_URL = exports.MONGO_URI = exports.PORT = void 0;
+exports.TEXTILE_API = exports.TEXTILE_USER_API_SECRET = exports.TEXTILE_USER_API_KEY = exports.CLIENT_CALLBACK = exports.FACEBOOK_CONFIG = exports.GOOGLE_CONFIG = exports.ROUTES = exports.SESSION_OPTIONS = exports.JWT_EXPIRY = exports.APP_SECRET = exports.CORS_CONFIG = exports.ROOT_URL = exports.MONGO_URI = exports.PORT = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
 const passport_jwt_1 = __importDefault(require("passport-jwt"));
 const ExtractJwt = passport_jwt_1.default.ExtractJwt;
@@ -14,8 +14,23 @@ exports.PORT = PORT;
 /** for dev, needs to match service name from docker-compose file. if hosting on heroku MONGO_URI will be an env, if not you need to manually create one*/
 const MONGO_URI = process.env.MONGODB_URI || 'mongodb://mongo:27017';
 exports.MONGO_URI = MONGO_URI;
-const ROOT_URL = process.env.NODE_ENV === 'production' ? process.env.ROOT_URL : 'localhost:' + PORT;
+const ROOT_URL = process.env.NODE_ENV === 'production' ? 'https://eduvault.herokuapp.com' : 'localhost:' + PORT;
 exports.ROOT_URL = ROOT_URL;
+const CORS_CONFIG = {
+    credentials: true,
+    origin: (ctx) => {
+        console.log('===================================ctx.request.header.origin===================================', ctx.request.header.origin);
+        const validDomains = [
+            'https://master--thirsty-ardinghelli-577c63.netlify.app',
+            'https://thirsty-ardinghelli-577c63.netlify.app',
+        ];
+        if (validDomains.indexOf(ctx.request.header.origin) !== -1) {
+            return ctx.request.header.origin;
+        }
+        return validDomains[0]; // we can't return void, so let's return one of the valid domains
+    },
+};
+exports.CORS_CONFIG = CORS_CONFIG;
 const APP_SECRET = process.env.APP_SECRET || 'secretString!%@#$@%';
 exports.APP_SECRET = APP_SECRET;
 /** expressed in seconds or a string describing a time span zeit/ms. Eg: 60, "2 days", "10h", "7d" */
@@ -41,7 +56,7 @@ const SESSION_OPTIONS = {
 exports.SESSION_OPTIONS = SESSION_OPTIONS;
 /** Sometimes the callback cannot find the referer, In a real setup, we might need apps that use this backend to register a callback */
 const CLIENT_CALLBACK = process.env.NODE_ENV === 'production'
-    ? 'https://optimistic-torvalds-74fc0d.netlify.app'
+    ? 'https://thirsty-ardinghelli-577c63.netlify.app'
     : 'http://localhost:8080/home/';
 exports.CLIENT_CALLBACK = CLIENT_CALLBACK;
 const ROUTES = {
@@ -80,6 +95,6 @@ const TEXTILE_USER_API_KEY = process.env.TEXTILE_USER_API_KEY;
 exports.TEXTILE_USER_API_KEY = TEXTILE_USER_API_KEY;
 const TEXTILE_USER_API_SECRET = process.env.TEXTILE_USER_API_SECRET;
 exports.TEXTILE_USER_API_SECRET = TEXTILE_USER_API_SECRET;
-const TEXTILE_API = process.env.TEXTILE_API;
+const TEXTILE_API = 'https://api.textile.io:3447';
 exports.TEXTILE_API = TEXTILE_API;
 //# sourceMappingURL=config.js.map

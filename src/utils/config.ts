@@ -41,7 +41,7 @@ const SESSION_OPTIONS = {
 /** Sometimes the callback cannot find the referer, In a real setup, we might need apps that use this backend to register a callback */
 const CLIENT_CALLBACK =
     process.env.NODE_ENV === 'production'
-        ? 'https://optimistic-torvalds-74fc0d.netlify.app'
+        ? 'https://thirsty-ardinghelli-577c63.netlify.app'
         : 'http://localhost:8080/home/';
 
 const ROUTES = {

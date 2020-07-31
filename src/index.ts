@@ -18,14 +18,14 @@ import userAuthRoute from './routes/wssUserAuthRoute';
 import { PORT, CORS_CONFIG } from './utils/config';
 
 const app = websockify(new Koa());
-// const app = new koa();
+
+if (process.env.NODE_ENV === 'production') app.proxy = true;
+
 /** Database */
 const db = connectDb();
 // mongoose.connection.collections['user'].drop(function (err) {
 //     console.log('collection dropped');
 // });
-
-// db.dropDatabase();
 
 /** Middlewares */
 app.use(async function handleGeneralError(ctx, next) {

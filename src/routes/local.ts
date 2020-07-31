@@ -42,15 +42,14 @@ const local = function (router: Router<DefaultState, Context>, passport: typeof 
                 await ctx.login(user);
                 ctx.session.jwt = createJwt(user.username);
                 await ctx.session.save();
-                ctx.oK(
-                    {
-                        encryptedKeyPair: user.encryptedKeyPair,
-                        jwt: ctx.session.jwt,
-                        pubKey: user.pubKey,
-                        threadIDStr: user.threadIDStr,
-                    },
-                    null,
-                );
+                const returnData = {
+                    encryptedKeyPair: user.encryptedKeyPair,
+                    jwt: ctx.session.jwt,
+                    pubKey: user.pubKey,
+                    threadIDStr: user.threadIDStr,
+                };
+                console.log('login authorized. returnData', returnData);
+                ctx.oK(returnData, null);
             }
         })(ctx, next);
     });

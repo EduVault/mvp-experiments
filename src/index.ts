@@ -32,6 +32,7 @@ app.use(async function handleGeneralError(ctx, next) {
     try {
         await next();
     } catch (error) {
+        console.log(error, error.message);
         ctx.internalServerError(error, error);
     }
 });

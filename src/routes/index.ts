@@ -28,10 +28,11 @@ const startRouter = (
         }
     };
     router.get('/get-user', checkAuth, async (ctx) => {
-        const user = await getUser(ctx.session.toJSON());
+        console.log('++++++++++++++++++get user+++++++++++++++++++');
+        const user = await (await getUser(ctx.session.toJSON())).toObject();
         if (!user) ctx.internalServerError('user not found');
         // console.log(user);
-        ctx.oK({ jwt: ctx.session.jwt, ...user });
+        ctx.oK({ ...user, jwt: ctx.session.jwt });
     });
     router.get('/logout', async (ctx) => {
         ctx.session = null;
@@ -45,7 +46,7 @@ const startRouter = (
         const user = await getUser(ctx.session.toJSON());
         if (!user) ctx.internalServerError('user not found');
         // console.log(user);
-        if (user.threadIDStr) ctx.oK({ threadIDStr: user.threadIDStr, exists: true });
+        if (user.threadIDStr) ctx.oK({ threadIDStr: user.toObject().threadIDStr, exists: true });
         user.threadIDStr = ctx.request.body.threadIDStr;
         await user.save();
         ctx.oK({ threadIDStr: user.threadIDStr });
@@ -54,7 +55,7 @@ const startRouter = (
         const user = await getUser(ctx.session.toJSON());
         if (!user) ctx.internalServerError('user not found');
         // console.log(user);
-        if (user.DbInfo) ctx.oK({ DbInfo: user.DbInfo, exists: true });
+        if (user.DbInfo) ctx.oK({ DbInfo: user.toObject().DbInfo, exists: true });
         user.DbInfo = ctx.request.body.DbInfo;
         await user.save();
         ctx.oK({ DbInfo: user.DbInfo });

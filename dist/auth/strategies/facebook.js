@@ -15,46 +15,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const passport_facebook_1 = require("passport-facebook");
 const user_1 = __importDefault(require("../../models/user"));
 const config_1 = require("../../utils/config");
+const newSocialMedia_1 = require("../../utils/newSocialMedia");
 const facebookStrat = new passport_facebook_1.Strategy(config_1.FACEBOOK_CONFIG, (ctx, token, refreshToken, profile, done) => __awaiter(void 0, void 0, void 0, function* () {
-    // console.log('===========ctx===========\n', ctx);
     // console.log('===========profile===========\n', profile);
     const email = profile.emails ? profile.emails[0].value.toLowerCase() || null : null;
     const user = yield user_1.default.findOne({
         username: email || profile.id,
     });
-    if (user) {
-        if (!user.facebook) {
-            user.facebook.id = profile.id;
-            user.facebook.givenName = profile.name.givenName;
-            user.facebook.familyName = profile.name.familyName;
-            user.facebook.picture = profile.photos[0].value || null;
-            user.facebook.token = token;
-            user.save((err) => {
-                if (err) {
-                    console.log(err);
-                    return done(err);
-                }
-                return done(null, user);
-            });
-        }
+    if (user && user.facebook)
         return done(null, user);
-    }
-    else {
-        const newUser = new user_1.default();
-        newUser.username = email || profile.id;
-        newUser.facebook.id = profile.id;
-        newUser.facebook.givenName = profile.name.givenName;
-        newUser.facebook.familyName = profile.name.familyName;
-        newUser.facebook.picture = profile.photos[0].value || null;
-        newUser.facebook.token = token;
-        newUser.save((err) => {
-            if (err) {
-                console.log(err);
-                return done(err);
-            }
-            return done(null, newUser);
-        });
-    }
+    else
+        return newSocialMedia_1.createSocialMediaAccount(user ? user : new user_1.default(), 'facebook', profile, token, done);
 }));
 exports.default = facebookStrat;
 //# sourceMappingURL=facebook.js.map

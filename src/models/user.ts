@@ -8,6 +8,7 @@ export interface IUser extends Document {
     username: string;
     password?: string;
     encryptedKeyPair?: string;
+    socialMediaKeyPair?: string;
     pubKey?: string;
     threadIDStr?: string;
     DbInfo?: string;
@@ -31,6 +32,7 @@ const UserSchema = new Schema(
         username: { type: String, unique: true, required: false },
         password: { type: String, unique: false, required: false },
         encryptedKeyPair: { type: String, unique: false, required: false },
+        socialMediaKeyPair: { type: String, unique: false, required: false },
         pubKey: { type: String, unique: false, required: false },
         threadIDStr: { type: String, unique: false, required: false },
         DbInfo: { type: String, unique: false, required: false },

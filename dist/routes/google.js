@@ -10,18 +10,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const config_1 = require("../utils/config");
+const jwt_1 = require("../utils/jwt");
 const google = function (router, passport) {
     router.get(config_1.ROUTES.GOOGLE_AUTH, passport.authenticate('google', { scope: ['profile', 'email'] }));
     router.get(config_1.ROUTES.GOOGLE_AUTH_CALLBACK, (ctx, next) => __awaiter(this, void 0, void 0, function* () {
-        return passport.authenticate('google', (err, user) => {
+        return passport.authenticate('google', (err, user) => __awaiter(this, void 0, void 0, function* () {
             if (err) {
                 ctx.unauthorized(err, err);
             }
             else {
                 ctx.login(user);
+                ctx.session.jwt = jwt_1.createJwt(user.username);
+                yield ctx.session.save();
                 ctx.redirect(config_1.CLIENT_CALLBACK);
             }
-        })(ctx, next);
+        }))(ctx, next);
     }));
     return router;
 };

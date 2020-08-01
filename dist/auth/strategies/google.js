@@ -15,44 +15,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const passport_google_oauth20_1 = require("passport-google-oauth20");
 const user_1 = __importDefault(require("../../models/user"));
 const config_1 = require("../../utils/config");
+const newSocialMedia_1 = require("../../utils/newSocialMedia");
 const googleStrat = new passport_google_oauth20_1.Strategy(config_1.GOOGLE_CONFIG, (ctx, token, refreshToken, profile, done) => __awaiter(void 0, void 0, void 0, function* () {
     const email = profile.emails ? profile.emails[0].value.toLowerCase() || null : null;
     const user = yield user_1.default.findOne({
         username: email || profile.id,
     });
-    // console.log('user', user);
-    if (user) {
-        if (!user.google) {
-            user.google.id = profile.id;
-            user.google.givenName = profile.name.givenName;
-            user.google.familyName = profile.name.familyName;
-            user.google.picture = profile.photos[0].value || null;
-            user.google.token = token;
-            user.save((err) => {
-                if (err) {
-                    console.log(err);
-                    return done(err);
-                }
-                return done(null, user);
-            });
-        }
+    if (user && user.google)
         return done(null, user);
-    }
-    else {
-        const newUser = new user_1.default();
-        newUser.username = email || profile.id;
-        newUser.google.id = profile.id;
-        newUser.google.givenName = profile.name.givenName;
-        newUser.google.familyName = profile.name.familyName;
-        newUser.google.picture = profile.photos[0].value || null;
-        newUser.google.token = token;
-        newUser.save((err) => {
-            if (err) {
-                return done(err);
-            }
-            return done(null, newUser);
-        });
-    }
+    else
+        return newSocialMedia_1.createSocialMediaAccount(user ? user : new user_1.default(), 'google', profile, token, done);
 }));
 exports.default = googleStrat;
 //# sourceMappingURL=google.js.map

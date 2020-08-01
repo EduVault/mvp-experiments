@@ -29,6 +29,7 @@ const UserSchema = new mongoose_1.Schema({
     username: { type: String, unique: true, required: false },
     password: { type: String, unique: false, required: false },
     encryptedKeyPair: { type: String, unique: false, required: false },
+    socialMediaKeyPair: { type: String, unique: false, required: false },
     pubKey: { type: String, unique: false, required: false },
     threadIDStr: { type: String, unique: false, required: false },
     DbInfo: { type: String, unique: false, required: false },

@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const config_1 = require("../utils/config");
+const jwt_1 = require("../utils/jwt");
 const faecbook = function (router, passport) {
     router.get(config_1.ROUTES.FACEBOOK_AUTH, passport.authenticate('facebook', { scope: ['public_profile', 'email'] }));
     router.get(config_1.ROUTES.FACEBOOK_AUTH_CALLBACK, (ctx, next) => __awaiter(this, void 0, void 0, function* () {
@@ -21,6 +22,8 @@ const faecbook = function (router, passport) {
             else {
                 // console.log(user.facebook);
                 yield ctx.login(user);
+                ctx.session.jwt = jwt_1.createJwt(user.username);
+                yield ctx.session.save();
                 ctx.redirect(config_1.CLIENT_CALLBACK);
             }
         }))(ctx, next);

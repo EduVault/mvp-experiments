@@ -1,9 +1,9 @@
 import Router from 'koa-router';
 import * as KoaPassport from 'koa-passport';
-import url from 'url';
 import { DefaultState, Context } from 'koa';
 import { ROUTES, CLIENT_CALLBACK } from '../utils/config';
 import { IUser } from '../models/user';
+import { createJwt, validateJwt } from '../utils/jwt';
 
 const faecbook = function (router: Router<DefaultState, Context>, passport: typeof KoaPassport) {
     router.get(
@@ -19,6 +19,8 @@ const faecbook = function (router: Router<DefaultState, Context>, passport: type
             } else {
                 // console.log(user.facebook);
                 await ctx.login(user);
+                ctx.session.jwt = createJwt(user.username);
+                await ctx.session.save();
                 ctx.redirect(CLIENT_CALLBACK);
             }
         })(ctx, next);

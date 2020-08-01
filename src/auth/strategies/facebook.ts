@@ -1,48 +1,25 @@
-import { Strategy as FacebookStrategy } from 'passport-facebook';
-import User, { IUser } from '../../models/user';
+import { Strategy as FacebookStrategy, Profile as FBProfile } from 'passport-facebook';
+import User from '../../models/user';
 import { FACEBOOK_CONFIG } from '../../utils/config';
+import { createSocialMediaAccount } from '../../utils/newSocialMedia';
 
 const facebookStrat = new FacebookStrategy(
     FACEBOOK_CONFIG,
     async (ctx, token, refreshToken, profile, done) => {
-        // console.log('===========ctx===========\n', ctx);
         // console.log('===========profile===========\n', profile);
         const email = profile.emails ? profile.emails[0].value.toLowerCase() || null : null;
         const user = await User.findOne({
             username: email || profile.id,
         });
-        if (user) {
-            if (!user.facebook) {
-                user.facebook.id = profile.id;
-                user.facebook.givenName = profile.name.givenName;
-                user.facebook.familyName = profile.name.familyName;
-                user.facebook.picture = profile.photos[0].value || null;
-                user.facebook.token = token;
-                user.save((err) => {
-                    if (err) {
-                        console.log(err);
-                        return done(err);
-                    }
-                    return done(null, user);
-                });
-            }
-            return done(null, user);
-        } else {
-            const newUser = new User();
-            newUser.username = email || profile.id;
-            newUser.facebook.id = profile.id;
-            newUser.facebook.givenName = profile.name.givenName;
-            newUser.facebook.familyName = profile.name.familyName;
-            newUser.facebook.picture = profile.photos[0].value || null;
-            newUser.facebook.token = token;
-            newUser.save((err) => {
-                if (err) {
-                    console.log(err);
-                    return done(err);
-                }
-                return done(null, newUser);
-            });
-        }
+        if (user && user.facebook) return done(null, user);
+        else
+            return createSocialMediaAccount(
+                user ? user : new User(),
+                'facebook',
+                profile,
+                token,
+                done,
+            );
     },
 );
 export default facebookStrat;

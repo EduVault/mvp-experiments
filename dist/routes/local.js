@@ -66,12 +66,14 @@ const local = function (router, passport) {
                 yield ctx.login(user);
                 ctx.session.jwt = jwt_1.createJwt(user.username);
                 yield ctx.session.save();
-                ctx.oK({
+                const returnData = {
                     encryptedKeyPair: user.encryptedKeyPair,
                     jwt: ctx.session.jwt,
                     pubKey: user.pubKey,
                     threadIDStr: user.threadIDStr,
-                }, null);
+                };
+                console.log('login authorized. returnData', returnData);
+                ctx.oK(returnData, null);
             }
         }))(ctx, next);
     }));

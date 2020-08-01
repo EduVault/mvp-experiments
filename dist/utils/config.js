@@ -19,12 +19,14 @@ exports.ROOT_URL = ROOT_URL;
 const CORS_CONFIG = {
     credentials: true,
     origin: (ctx) => {
-        console.log('===================================ctx.request.header.origin===================================', ctx.request.header.origin);
+        console.log('===================================ctx.request.header.origin===================================\n', ctx.request.header.origin);
         const validDomains = [
+            process.env.NODE_ENV !== 'production' ? 'http://localhost:8080' : '',
             'https://master--thirsty-ardinghelli-577c63.netlify.app',
             'https://thirsty-ardinghelli-577c63.netlify.app',
         ];
         if (validDomains.indexOf(ctx.request.header.origin) !== -1) {
+            console.log('\n is valid');
             return ctx.request.header.origin;
         }
         return validDomains[0]; // we can't return void, so let's return one of the valid domains
@@ -56,7 +58,7 @@ const SESSION_OPTIONS = {
 exports.SESSION_OPTIONS = SESSION_OPTIONS;
 /** Sometimes the callback cannot find the referer, In a real setup, we might need apps that use this backend to register a callback */
 const CLIENT_CALLBACK = process.env.NODE_ENV === 'production'
-    ? 'https://thirsty-ardinghelli-577c63.netlify.app'
+    ? 'https://thirsty-ardinghelli-577c63.netlify.app/'
     : 'http://localhost:8080/home/';
 exports.CLIENT_CALLBACK = CLIENT_CALLBACK;
 const ROUTES = {

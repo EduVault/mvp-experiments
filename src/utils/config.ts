@@ -20,17 +20,17 @@ const ROOT_URL =
 const CORS_CONFIG: cors.Options = {
     credentials: true,
     origin: (ctx) => {
-        console.log(
-            '===================================ctx.request.header.origin===================================\n',
-            ctx.request.header.origin,
-        );
+        // console.log(
+        //     '===================================ctx.request.header.origin===================================\n',
+        //     ctx.request.header.origin,
+        // );
         const validDomains = [
             process.env.NODE_ENV !== 'production' ? 'http://localhost:8080' : '',
             'https://master--thirsty-ardinghelli-577c63.netlify.app',
             'https://thirsty-ardinghelli-577c63.netlify.app',
         ];
         if (validDomains.indexOf(ctx.request.header.origin) !== -1) {
-            console.log('\n is valid');
+            // console.log('\n is valid');
             return ctx.request.header.origin;
         }
         return validDomains[0]; // we can't return void, so let's return one of the valid domains
@@ -71,8 +71,7 @@ const ROUTES = {
     FACEBOOK_AUTH_CALLBACK: '/auth/facebook/callback',
     GOOGLE_AUTH: '/auth/google',
     GOOGLE_AUTH_CALLBACK: '/auth/google/callback',
-    LOCAL_SIGNUP: '/auth/local-signup',
-    LOCAL_LOGIN: '/auth/local-login',
+    LOCAL: '/auth/local',
     VERIFY_JWT: '/verify-jwt',
     TEXTILE_RENEW: '/renew-textile',
 };

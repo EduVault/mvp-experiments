@@ -6,20 +6,33 @@ import { PasswordRes } from '../types';
 import { ROUTES, CLIENT_CALLBACK, APP_SECRET, JWT_EXPIRY } from '../utils/config';
 import { createJwt, validateJwt } from '../utils/jwt';
 const local = function (router: Router<DefaultState, Context>, passport: typeof KoaPassport) {
-    router.post(ROUTES.LOCAL_SIGNUP, async (ctx) => {
-        const username = ctx.request.body.username;
-        const previousUser = await User.findOne({ username: username });
+    async function signup(ctx: Context) {
+        const data = ctx.request.body;
+        const previousUser = await User.findOne({
+            username: data.username,
+        });
         if (previousUser) {
             ctx.unauthorized({ error: 'user already exists' }, 'user already exists');
             return;
         }
+        if (
+            !data.password ||
+            !data.username ||
+            !data.encryptedKeyPair ||
+            !data.pubKey ||
+            !data.threadIDStr
+        ) {
+            ctx.unauthorized({ error: 'invalid signup' }, 'invalid signup');
+            return;
+        }
         const newUser = new User();
-        newUser.username = username;
-        newUser.password = hashPassword(ctx.request.body.password);
-        newUser.encryptedKeyPair = ctx.request.body.encryptedKeyPair;
-        newUser.pubKey = ctx.request.body.pubKey;
-        newUser.threadIDStr = ctx.request.body.threadIDStr;
-        console.log('ctx.request.body', ctx.request.body);
+        newUser.username = data.username;
+        newUser.password = hashPassword(data.password);
+        newUser.encryptedKeyPair = data.encryptedKeyPair;
+        newUser.pubKey = data.pubKey;
+        newUser.threadIDStr = data.threadIDStr;
+        // console.log('data', data);
+        console.log('new user', newUser.toJSON());
         newUser.save();
         await ctx.login(newUser);
         ctx.session.jwt = createJwt(newUser.username);
@@ -33,25 +46,29 @@ const local = function (router: Router<DefaultState, Context>, passport: typeof 
             },
             null,
         );
-    });
-    router.post(ROUTES.LOCAL_LOGIN, async (ctx, next) => {
-        return passport.authenticate('local', async (err: string, user: IUser) => {
-            if (err) {
-                ctx.unauthorized(err, err);
-            } else {
-                await ctx.login(user);
-                ctx.session.jwt = createJwt(user.username);
-                await ctx.session.save();
-                const returnData = {
-                    encryptedKeyPair: user.encryptedKeyPair,
-                    jwt: ctx.session.jwt,
-                    pubKey: user.pubKey,
-                    threadIDStr: user.threadIDStr,
-                };
-                console.log('login authorized. returnData', returnData);
-                ctx.oK(returnData, null);
-            }
-        })(ctx, next);
+    }
+
+    router.post(ROUTES.LOCAL, async (ctx, next) => {
+        const user = await User.findOne({ username: ctx.request.body.username });
+        if (!user) return signup(ctx);
+        else
+            return passport.authenticate('local', async (err: string, user: IUser) => {
+                if (err) {
+                    ctx.unauthorized(err, err);
+                } else {
+                    await ctx.login(user);
+                    ctx.session.jwt = createJwt(user.username);
+                    await ctx.session.save();
+                    const returnData = {
+                        encryptedKeyPair: user.encryptedKeyPair,
+                        jwt: ctx.session.jwt,
+                        pubKey: user.pubKey,
+                        threadIDStr: user.threadIDStr,
+                    };
+                    // console.log('login authorized. returnData', returnData);
+                    ctx.oK(returnData, null);
+                }
+            })(ctx, next);
     });
     return router;
 };

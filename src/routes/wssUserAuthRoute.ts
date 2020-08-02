@@ -37,7 +37,7 @@ const userAuthRoute = (app: websockify.App<Koa.DefaultState, Koa.DefaultContext>
                     throw new Error('missing jwt');
                 }
                 const jwtCheck = await validateJwt(data.jwt);
-                console.log('jwtCheck', jwtCheck);
+                console.log('jwtCheck', !!jwtCheck);
                 if (!jwtCheck || !jwtCheck.pubKey || !jwtCheck.username) {
                     throw new Error('invalid jwt');
                 }
@@ -59,15 +59,19 @@ const userAuthRoute = (app: websockify.App<Koa.DefaultState, Koa.DefaultContext>
                                     response.type = 'challenge-request';
                                     response.value = Buffer.from(challenge).toJSON();
                                     ctx.websocket.send(JSON.stringify(response));
+                                    let recieved = false;
                                     /** Wait for the challenge event from our event emitter */
                                     emitter.on('challenge-response', (signature) => {
+                                        recieved = true;
                                         // console.log('challenge-response signature', signature);
                                         resolve(Buffer.from(signature));
                                     });
                                     setTimeout(() => {
-                                        console.log('client took too long to respond');
                                         reject();
-                                    }, 5000);
+                                        if (!recieved) {
+                                            throw 'client took too long to respond';
+                                        }
+                                    }, 10000);
                                 });
                             },
                         );

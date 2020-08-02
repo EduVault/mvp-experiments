@@ -19,8 +19,8 @@ const startRouter = (
         ctx.oK(null, 'pong!');
     });
     const checkAuth: Middleware = (ctx, next) => {
-        console.log('cookie', ctx.cookie);
-        console.log('session', ctx.session.toJSON());
+        console.log('cookie exists', !!ctx.cookie);
+        // console.log('session', ctx.session.toJSON());
         if (!ctx.isAuthenticated()) {
             ctx.unauthorized(null, 'unautharized');
         } else {
@@ -28,7 +28,7 @@ const startRouter = (
         }
     };
     router.get('/get-user', checkAuth, async (ctx) => {
-        console.log('++++++++++++++++++get user+++++++++++++++++++');
+        // console.log('++++++++++++++++++get user+++++++++++++++++++');
         const user = await (await getUser(ctx.session.toJSON())).toObject();
         if (!user) ctx.internalServerError('user not found');
         // console.log(user);

@@ -23,8 +23,8 @@ const startRouter = (app, passport) => {
         ctx.oK(null, 'pong!');
     }));
     const checkAuth = (ctx, next) => {
-        console.log('cookie', ctx.cookie);
-        console.log('session', ctx.session.toJSON());
+        console.log('cookie exists', !!ctx.cookie);
+        // console.log('session', ctx.session.toJSON());
         if (!ctx.isAuthenticated()) {
             ctx.unauthorized(null, 'unautharized');
         }
@@ -33,7 +33,7 @@ const startRouter = (app, passport) => {
         }
     };
     router.get('/get-user', checkAuth, (ctx) => __awaiter(void 0, void 0, void 0, function* () {
-        console.log('++++++++++++++++++get user+++++++++++++++++++');
+        // console.log('++++++++++++++++++get user+++++++++++++++++++');
         const user = yield (yield getUserFromSession_1.default(ctx.session.toJSON())).toObject();
         if (!user)
             ctx.internalServerError('user not found');

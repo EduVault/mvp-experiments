@@ -16,7 +16,7 @@ const user_1 = __importDefault(require("../models/user"));
 function getUser(session) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            console.log(session);
+            // console.log(session);
             const user = yield user_1.default.findById(session.passport.user);
             if (user) {
                 return user;

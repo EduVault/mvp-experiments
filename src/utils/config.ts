@@ -20,17 +20,17 @@ const ROOT_URL =
 const CORS_CONFIG: cors.Options = {
     credentials: true,
     origin: (ctx) => {
-        console.log(
-            '===================================ctx.request.header.origin===================================\n',
-            ctx.request.header.origin,
-        );
+        // console.log(
+        //     '===================================ctx.request.header.origin===================================\n',
+        //     ctx.request.header.origin,
+        // );
         const validDomains = [
             process.env.NODE_ENV !== 'production' ? 'http://localhost:8080' : '',
             'https://master--thirsty-ardinghelli-577c63.netlify.app',
             'https://thirsty-ardinghelli-577c63.netlify.app',
         ];
         if (validDomains.indexOf(ctx.request.header.origin) !== -1) {
-            console.log('\n is valid');
+            // console.log('\n is valid');
             return ctx.request.header.origin;
         }
         return validDomains[0]; // we can't return void, so let's return one of the valid domains
@@ -51,19 +51,19 @@ const SESSION_OPTIONS = {
     overwrite: true /** (boolean) can overwrite or not (default true) */,
     httpOnly:
         process.env.NODE_ENV === 'production'
-            ? true
+            ? false
             : false /** (boolean) httpOnly or not (default true) */,
     signed: true /** (boolean) signed or not (default true) */,
     rolling: true /** (boolean) Force a session identifier cookie to be set on every response. The expiration is reset to the original maxAge, resetting the expiration countdown. (default is false) */,
     renew: false /** (boolean) renew session when session is nearly expired, so we can always keep user logged in. (default is false)*/,
-    secure: process.env.NODE_ENV === 'production' ? true : false /** (boolean) secure cookie*/,
-    sameSite: null /** (string) session cookie sameSite options (default null, don't set it) */,
+    secure: process.env.NODE_ENV === 'production' ? false : false /** (boolean) secure cookie*/,
+    sameSite: false /** (string) session cookie sameSite options (default null, don't set it) */,
 } as Partial<session.opts>;
 
 /** Sometimes the callback cannot find the referer, In a real setup, we might need apps that use this backend to register a callback */
 const CLIENT_CALLBACK =
     process.env.NODE_ENV === 'production'
-        ? 'https://thirsty-ardinghelli-577c63.netlify.app/'
+        ? 'https://thirsty-ardinghelli-577c63.netlify.app/home/'
         : 'http://localhost:8080/home/';
 
 const ROUTES = {

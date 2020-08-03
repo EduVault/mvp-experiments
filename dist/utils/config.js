@@ -56,7 +56,9 @@ const SESSION_OPTIONS = {
     rolling: true /** (boolean) Force a session identifier cookie to be set on every response. The expiration is reset to the original maxAge, resetting the expiration countdown. (default is false) */,
     renew: false /** (boolean) renew session when session is nearly expired, so we can always keep user logged in. (default is false)*/,
     secure: process.env.NODE_ENV === 'production' ? true : false /** (boolean) secure cookie*/,
-    sameSite: null /** (string) session cookie sameSite options (default null, don't set it) */,
+    sameSite: process.env.NODE_ENV === 'production'
+        ? true
+        : false /** (string) session cookie sameSite options (default null, don't set it) */,
 };
 exports.SESSION_OPTIONS = SESSION_OPTIONS;
 /** Sometimes the callback cannot find the referer, In a real setup, we might need apps that use this backend to register a callback */

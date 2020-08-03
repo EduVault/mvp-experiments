@@ -69,7 +69,7 @@ const userAuthRoute = (app: websockify.App<Koa.DefaultState, Koa.DefaultContext>
                                     setTimeout(() => {
                                         reject();
                                         if (!recieved) {
-                                            throw 'client took too long to respond';
+                                            console.log('client took too long to respond');
                                         }
                                     }, 10000);
                                 });

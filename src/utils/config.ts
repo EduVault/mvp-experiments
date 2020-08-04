@@ -59,7 +59,7 @@ const SESSION_OPTIONS = {
     secure: process.env.NODE_ENV === 'production' ? true : false /** (boolean) secure cookie*/,
     sameSite:
         process.env.NODE_ENV === 'production'
-            ? true
+            ? 'none'
             : false /** (string) session cookie sameSite options (default null, don't set it) */,
 } as Partial<session.opts>;
 

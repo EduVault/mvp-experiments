@@ -79,7 +79,7 @@ const userAuthRoute = (app: websockify.App<Koa.DefaultState, Koa.DefaultContext>
                          * The challenge was successfully completed by the client
                          */
                         console.log('challenge completed');
-                        const apiSig = await getAPISig();
+                        const apiSig = await getAPISig(5000);
                         const userAuth: UserAuth = {
                             ...apiSig,
                             token: token,

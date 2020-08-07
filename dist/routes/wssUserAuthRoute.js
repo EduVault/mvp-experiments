@@ -68,7 +68,7 @@ const userAuthRoute = (app) => {
                          * The challenge was successfully completed by the client
                          */
                         console.log('challenge completed');
-                        const apiSig = yield helpers_1.getAPISig();
+                        const apiSig = yield helpers_1.getAPISig(5000);
                         const userAuth = Object.assign(Object.assign({}, apiSig), { token: token, key: config_1.TEXTILE_USER_API_KEY });
                         ctx.websocket.send(JSON.stringify({
                             type: 'token-response',

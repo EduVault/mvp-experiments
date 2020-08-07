@@ -57,7 +57,7 @@ const SESSION_OPTIONS = {
     renew: false /** (boolean) renew session when session is nearly expired, so we can always keep user logged in. (default is false)*/,
     secure: process.env.NODE_ENV === 'production' ? true : false /** (boolean) secure cookie*/,
     sameSite: process.env.NODE_ENV === 'production'
-        ? true
+        ? 'none'
         : false /** (string) session cookie sameSite options (default null, don't set it) */,
 };
 exports.SESSION_OPTIONS = SESSION_OPTIONS;

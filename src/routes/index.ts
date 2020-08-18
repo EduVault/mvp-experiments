@@ -7,6 +7,8 @@ import local from './local';
 import facebook from './facebook';
 import google from './google';
 import dotwallet from './dotwallet';
+import saveOnChain from './saveOnChain';
+import checkAuth from './checkAuth';
 import { DefaultState, Context, Middleware } from 'koa';
 import { CLIENT_CALLBACK } from '../utils/config';
 import getUser from '../utils/getUserFromSession';
@@ -19,15 +21,7 @@ const startRouter = (
     router.get('/ping', async (ctx) => {
         ctx.oK(null, 'pong!');
     });
-    const checkAuth: Middleware = (ctx, next) => {
-        console.log('cookie exists', !!ctx.cookie);
-        // console.log('session', ctx.session.toJSON());
-        if (!ctx.isAuthenticated()) {
-            ctx.unauthorized(null, 'unautharized');
-        } else {
-            return next();
-        }
-    };
+
     router.get('/get-user', checkAuth, async (ctx) => {
         // console.log('++++++++++++++++++get user+++++++++++++++++++');
         const user = await (await getUser(ctx.session.toJSON())).toObject();
@@ -65,6 +59,7 @@ const startRouter = (
     facebook(router, passport);
     google(router, passport);
     dotwallet(router, passport);
+    saveOnChain(router);
     app.use(router.routes()).use(router.allowedMethods());
     return router;
 };

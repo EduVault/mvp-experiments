@@ -17,23 +17,15 @@ const local_1 = __importDefault(require("./local"));
 const facebook_1 = __importDefault(require("./facebook"));
 const google_1 = __importDefault(require("./google"));
 const dotwallet_1 = __importDefault(require("./dotwallet"));
+const saveOnChain_1 = __importDefault(require("./saveOnChain"));
+const checkAuth_1 = __importDefault(require("./checkAuth"));
 const getUserFromSession_1 = __importDefault(require("../utils/getUserFromSession"));
 const startRouter = (app, passport) => {
     const router = new koa_router_1.default();
     router.get('/ping', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         ctx.oK(null, 'pong!');
     }));
-    const checkAuth = (ctx, next) => {
-        console.log('cookie exists', !!ctx.cookie);
-        // console.log('session', ctx.session.toJSON());
-        if (!ctx.isAuthenticated()) {
-            ctx.unauthorized(null, 'unautharized');
-        }
-        else {
-            return next();
-        }
-    };
-    router.get('/get-user', checkAuth, (ctx) => __awaiter(void 0, void 0, void 0, function* () {
+    router.get('/get-user', checkAuth_1.default, (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         // console.log('++++++++++++++++++get user+++++++++++++++++++');
         const user = yield (yield getUserFromSession_1.default(ctx.session.toJSON())).toObject();
         if (!user)
@@ -46,10 +38,10 @@ const startRouter = (app, passport) => {
         ctx.logout();
         ctx.oK();
     }));
-    router.get('/auth-check', checkAuth, (ctx) => {
+    router.get('/auth-check', checkAuth_1.default, (ctx) => {
         ctx.oK(null, 'ok');
     });
-    router.post('/save-thread-id', checkAuth, (ctx) => __awaiter(void 0, void 0, void 0, function* () {
+    router.post('/save-thread-id', checkAuth_1.default, (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         const user = yield getUserFromSession_1.default(ctx.session.toJSON());
         if (!user)
             ctx.internalServerError('user not found');
@@ -60,7 +52,7 @@ const startRouter = (app, passport) => {
         yield user.save();
         ctx.oK({ threadIDStr: user.threadIDStr });
     }));
-    router.post('/upload-db-info', checkAuth, (ctx) => __awaiter(void 0, void 0, void 0, function* () {
+    router.post('/upload-db-info', checkAuth_1.default, (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         const user = yield getUserFromSession_1.default(ctx.session.toJSON());
         if (!user)
             ctx.internalServerError('user not found');
@@ -75,6 +67,7 @@ const startRouter = (app, passport) => {
     facebook_1.default(router, passport);
     google_1.default(router, passport);
     dotwallet_1.default(router, passport);
+    saveOnChain_1.default(router);
     app.use(router.routes()).use(router.allowedMethods());
     return router;
 };

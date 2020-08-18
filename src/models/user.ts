@@ -1,8 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { DotwalletAccessData, DotwalletProfile } from '../types';
+import { DotwalletProfile } from '../types';
 
 import * as bCrypt from 'bcrypt-nodejs';
-import { ThreadID } from '@textile/hub';
 
 /** @param username will be an email for local scheme, for google and facebook will be email if available or id if not */
 interface Dotwallet extends DotwalletProfile {

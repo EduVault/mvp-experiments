@@ -42,6 +42,7 @@ const koa_logger_1 = __importDefault(require("koa-logger"));
 const koa_bodyparser_1 = __importDefault(require("koa-bodyparser"));
 const koa_helmet_1 = __importDefault(require("koa-helmet"));
 const koa_websocket_1 = __importDefault(require("koa-websocket"));
+const ip_1 = __importDefault(require("ip"));
 const mongoose_1 = __importDefault(require("./mongo/mongoose"));
 const passportInit_1 = __importDefault(require("./auth/passportInit"));
 const routes_1 = __importDefault(require("./routes"));
@@ -90,5 +91,5 @@ const router = routes_1.default(app, passport);
 /** Websockets */
 wssUserAuthRoute_1.default(app);
 /** Start the server! */
-app.listen(config_1.PORT, () => console.log(`Koa server listening on PORT ${config_1.PORT}`));
+app.listen(config_1.PORT, () => console.log(`Koa server listening at ${ip_1.default.address()}:${config_1.PORT}`));
 //# sourceMappingURL=index.js.map

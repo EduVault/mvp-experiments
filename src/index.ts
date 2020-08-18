@@ -10,6 +10,7 @@ import logger from 'koa-logger';
 import bodyParser from 'koa-bodyparser';
 import helmet from 'koa-helmet';
 import websockify from 'koa-websocket';
+import ip from 'ip';
 
 import connectDb from './mongo/mongoose';
 import passportInit from './auth/passportInit';
@@ -62,4 +63,4 @@ const router = startRouter(app, passport);
 /** Websockets */
 userAuthRoute(app);
 /** Start the server! */
-app.listen(PORT, () => console.log(`Koa server listening on PORT ${PORT}`));
+app.listen(PORT, () => console.log(`Koa server listening at ${ip.address()}:${PORT}`));

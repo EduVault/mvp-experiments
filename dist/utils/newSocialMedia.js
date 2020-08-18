@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createSocialMediaAccount = void 0;
+exports.createDotwalletAccount = exports.createSocialMediaAccount = void 0;
 const crypto_js_1 = __importDefault(require("crypto-js"));
 const threads_core_1 = require("@textile/threads-core");
 const hub_1 = require("@textile/hub");
@@ -43,4 +43,27 @@ function createSocialMediaAccount(user, type, profile, token, done) {
     });
 }
 exports.createSocialMediaAccount = createSocialMediaAccount;
+function createDotwalletAccount(user, profile, token, done) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const id = profile.user_open_id;
+        if (!user.username)
+            user.username = id;
+        const keyPair = yield threads_core_1.Libp2pCryptoIdentity.fromRandom();
+        const encryptedKeyPair = crypto_js_1.default.AES.encrypt(keyPair.toString(), id).toString();
+        user.socialMediaKeyPair = encryptedKeyPair;
+        user.pubKey = keyPair.public.toString();
+        const newThreadID = hub_1.ThreadID.fromRandom();
+        user.threadIDStr = newThreadID.toString();
+        user.dotwallet = Object.assign(Object.assign({}, profile), { token: token });
+        console.log('user', user);
+        user.save((err) => {
+            if (err) {
+                console.log(err);
+                return done(err);
+            }
+            return done(null, user);
+        });
+    });
+}
+exports.createDotwalletAccount = createDotwalletAccount;
 //# sourceMappingURL=newSocialMedia.js.map

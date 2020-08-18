@@ -3,9 +3,9 @@ import * as KoaPassport from 'koa-passport';
 import { DefaultState, Context } from 'koa';
 import { ROUTES, CLIENT_CALLBACK } from '../utils/config';
 import { IUser } from '../models/user';
-import { createJwt, validateJwt } from '../utils/jwt';
+import { createJwt } from '../utils/jwt';
 
-const faecbook = function (router: Router<DefaultState, Context>, passport: typeof KoaPassport) {
+const facebook = function (router: Router<DefaultState, Context>, passport: typeof KoaPassport) {
     router.get(
         ROUTES.FACEBOOK_AUTH,
         passport.authenticate('facebook', { scope: ['public_profile', 'email'] }),
@@ -27,4 +27,4 @@ const faecbook = function (router: Router<DefaultState, Context>, passport: type
     });
     return router;
 };
-export default faecbook;
+export default facebook;

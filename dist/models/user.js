@@ -50,6 +50,16 @@ const UserSchema = new mongoose_1.Schema({
         familyName: { type: String, unique: false, required: false },
         picture: { type: String, unique: false, required: false },
     },
+    dotwallet: {
+        token: { type: String, unique: false, required: false },
+        pay_status: { type: Number, unique: false, required: false },
+        pre_amount: { type: Number, unique: false, required: false },
+        total_amount: { type: Number, unique: false, required: false },
+        user_address: { type: String, unique: false, required: false },
+        user_avatar: { type: String, unique: false, required: false },
+        user_name: { type: String, unique: false, required: false },
+        user_open_id: { type: String, unique: false, required: false },
+    },
 }, {
     collection: 'user',
     timestamps: true,

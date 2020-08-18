@@ -16,6 +16,7 @@ const koa_router_1 = __importDefault(require("koa-router"));
 const local_1 = __importDefault(require("./local"));
 const facebook_1 = __importDefault(require("./facebook"));
 const google_1 = __importDefault(require("./google"));
+const dotwallet_1 = __importDefault(require("./dotwallet"));
 const getUserFromSession_1 = __importDefault(require("../utils/getUserFromSession"));
 const startRouter = (app, passport) => {
     const router = new koa_router_1.default();
@@ -73,6 +74,7 @@ const startRouter = (app, passport) => {
     local_1.default(router, passport);
     facebook_1.default(router, passport);
     google_1.default(router, passport);
+    dotwallet_1.default(router, passport);
     app.use(router.routes()).use(router.allowedMethods());
     return router;
 };

@@ -77,6 +77,7 @@ const ROUTES = {
     LOCAL: '/auth/local',
     VERIFY_JWT: '/verify-jwt',
     TEXTILE_RENEW: '/renew-textile',
+    DOTWALLET_AUTH: '/auth/dotwallet',
 };
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
@@ -99,6 +100,9 @@ const FACEBOOK_CONFIG = {
     passReqToCallback: true,
 } as StrategyOptionWithRequest;
 
+const DOTWALLET_SECRET = process.env.DOTWALLET_SECRET;
+const DOTWALLET_APP_ID = process.env.DOTWALLET_APP_ID;
+
 /** Textile */
 const TEXTILE_USER_API_KEY = process.env.TEXTILE_USER_API_KEY;
 const TEXTILE_USER_API_SECRET = process.env.TEXTILE_USER_API_SECRET;
@@ -119,4 +123,6 @@ export {
     TEXTILE_USER_API_KEY,
     TEXTILE_USER_API_SECRET,
     TEXTILE_API,
+    DOTWALLET_SECRET,
+    DOTWALLET_APP_ID,
 };

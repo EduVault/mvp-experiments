@@ -6,6 +6,7 @@ import * as KoaPassport from 'koa-passport';
 import local from './local';
 import facebook from './facebook';
 import google from './google';
+import dotwallet from './dotwallet';
 import { DefaultState, Context, Middleware } from 'koa';
 import { CLIENT_CALLBACK } from '../utils/config';
 import getUser from '../utils/getUserFromSession';
@@ -63,7 +64,7 @@ const startRouter = (
     local(router, passport);
     facebook(router, passport);
     google(router, passport);
-
+    dotwallet(router, passport);
     app.use(router.routes()).use(router.allowedMethods());
     return router;
 };

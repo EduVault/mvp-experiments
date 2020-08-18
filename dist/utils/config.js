@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TEXTILE_API = exports.TEXTILE_USER_API_SECRET = exports.TEXTILE_USER_API_KEY = exports.CLIENT_CALLBACK = exports.FACEBOOK_CONFIG = exports.GOOGLE_CONFIG = exports.ROUTES = exports.SESSION_OPTIONS = exports.JWT_EXPIRY = exports.APP_SECRET = exports.CORS_CONFIG = exports.ROOT_URL = exports.MONGO_URI = exports.PORT = void 0;
+exports.DOTWALLET_APP_ID = exports.DOTWALLET_SECRET = exports.TEXTILE_API = exports.TEXTILE_USER_API_SECRET = exports.TEXTILE_USER_API_KEY = exports.CLIENT_CALLBACK = exports.FACEBOOK_CONFIG = exports.GOOGLE_CONFIG = exports.ROUTES = exports.SESSION_OPTIONS = exports.JWT_EXPIRY = exports.APP_SECRET = exports.CORS_CONFIG = exports.ROOT_URL = exports.MONGO_URI = exports.PORT = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
 const passport_jwt_1 = __importDefault(require("passport-jwt"));
 const ExtractJwt = passport_jwt_1.default.ExtractJwt;
@@ -74,6 +74,7 @@ const ROUTES = {
     LOCAL: '/auth/local',
     VERIFY_JWT: '/verify-jwt',
     TEXTILE_RENEW: '/renew-textile',
+    DOTWALLET_AUTH: '/auth/dotwallet',
 };
 exports.ROUTES = ROUTES;
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
@@ -96,6 +97,10 @@ const FACEBOOK_CONFIG = {
     passReqToCallback: true,
 };
 exports.FACEBOOK_CONFIG = FACEBOOK_CONFIG;
+const DOTWALLET_SECRET = process.env.DOTWALLET_SECRET;
+exports.DOTWALLET_SECRET = DOTWALLET_SECRET;
+const DOTWALLET_APP_ID = process.env.DOTWALLET_APP_ID;
+exports.DOTWALLET_APP_ID = DOTWALLET_APP_ID;
 /** Textile */
 const TEXTILE_USER_API_KEY = process.env.TEXTILE_USER_API_KEY;
 exports.TEXTILE_USER_API_KEY = TEXTILE_USER_API_KEY;

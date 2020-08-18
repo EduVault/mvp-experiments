@@ -10,6 +10,7 @@ const config_1 = require("../utils/config");
 const local_1 = __importDefault(require("./strategies/local"));
 const google_1 = __importDefault(require("./strategies/google"));
 const facebook_1 = __importDefault(require("./strategies/facebook"));
+const dotwallet_1 = __importDefault(require("./strategies/dotwallet"));
 exports.default = (app) => {
     /** If we aren't using sessions can comment out this
      * remember to also ad  { session: false } to each passport.authenticate call if you don't want session on that
@@ -28,6 +29,7 @@ exports.default = (app) => {
     koa_passport_1.default.use(local_1.default);
     koa_passport_1.default.use(google_1.default);
     koa_passport_1.default.use(facebook_1.default);
+    koa_passport_1.default.use('dotwallet', dotwallet_1.default);
     /** Boilerplate */
     app.use(koa_passport_1.default.initialize());
     app.use(koa_passport_1.default.session());

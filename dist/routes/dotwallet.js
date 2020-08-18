@@ -11,10 +11,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const config_1 = require("../utils/config");
 const jwt_1 = require("../utils/jwt");
-const facebook = function (router, passport) {
-    router.get(config_1.ROUTES.FACEBOOK_AUTH, passport.authenticate('facebook', { scope: ['public_profile', 'email'] }));
-    router.get(config_1.ROUTES.FACEBOOK_AUTH_CALLBACK, (ctx, next) => __awaiter(this, void 0, void 0, function* () {
-        return passport.authenticate('facebook', (err, user) => __awaiter(this, void 0, void 0, function* () {
+const dotwallet = function (router, passport) {
+    router.get(config_1.ROUTES.DOTWALLET_AUTH, (ctx, next) => __awaiter(this, void 0, void 0, function* () {
+        return passport.authenticate('dotwallet', (err, user) => __awaiter(this, void 0, void 0, function* () {
             if (err) {
                 console.log(err);
                 ctx.unauthorized(err, err);
@@ -30,5 +29,5 @@ const facebook = function (router, passport) {
     }));
     return router;
 };
-exports.default = facebook;
-//# sourceMappingURL=facebook.js.map
+exports.default = dotwallet;
+//# sourceMappingURL=dotwallet.js.map

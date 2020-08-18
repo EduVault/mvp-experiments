@@ -6,6 +6,7 @@ import { APP_SECRET, SESSION_OPTIONS } from '../utils/config';
 import localStrat from './strategies/local';
 import googleStrat from './strategies/google';
 import facebookStrat from './strategies/facebook';
+import dotwalletStrat from './strategies/dotwallet';
 
 export default (app: Koa) => {
     /** If we aren't using sessions can comment out this
@@ -27,6 +28,7 @@ export default (app: Koa) => {
     passport.use(localStrat);
     passport.use(googleStrat);
     passport.use(facebookStrat);
+    passport.use('dotwallet', dotwalletStrat);
     /** Boilerplate */
     app.use(passport.initialize());
     app.use(passport.session());

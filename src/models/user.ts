@@ -1,9 +1,13 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import { DotwalletAccessData, DotwalletProfile } from '../types';
 
 import * as bCrypt from 'bcrypt-nodejs';
 import { ThreadID } from '@textile/hub';
 
 /** @param username will be an email for local scheme, for google and facebook will be email if available or id if not */
+interface Dotwallet extends DotwalletProfile {
+    token: string;
+}
 export interface IUser extends Document {
     username: string;
     password?: string;
@@ -15,6 +19,7 @@ export interface IUser extends Document {
     DbInfo?: string;
     facebook?: SocialMediaAccount;
     google?: SocialMediaAccount;
+    dotwallet?: Dotwallet;
 }
 interface SocialMediaAccount {
     id?: string;
@@ -53,6 +58,16 @@ const UserSchema = new Schema(
             givenName: { type: String, unique: false, required: false },
             familyName: { type: String, unique: false, required: false },
             picture: { type: String, unique: false, required: false },
+        },
+        dotwallet: {
+            token: { type: String, unique: false, required: false },
+            pay_status: { type: Number, unique: false, required: false },
+            pre_amount: { type: Number, unique: false, required: false },
+            total_amount: { type: Number, unique: false, required: false },
+            user_address: { type: String, unique: false, required: false },
+            user_avatar: { type: String, unique: false, required: false },
+            user_name: { type: String, unique: false, required: false },
+            user_open_id: { type: String, unique: false, required: false },
         },
     },
     {

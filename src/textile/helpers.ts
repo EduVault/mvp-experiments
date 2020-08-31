@@ -1,16 +1,12 @@
 import { Libp2pCryptoIdentity } from '@textile/threads-core';
 import { createAPISig, Client, UserAuth } from '@textile/hub';
-import { TEXTILE_USER_API_KEY, TEXTILE_USER_API_SECRET, TEXTILE_API } from '../utils/config';
+import { TEXTILE_USER_API_KEY, TEXTILE_USER_API_SECRET } from '../utils/config';
 
 const newClientDB = async () => {
-    const API = TEXTILE_API;
-    const db = await Client.withKeyInfo(
-        {
-            key: TEXTILE_USER_API_KEY,
-            secret: TEXTILE_USER_API_SECRET,
-        },
-        API,
-    );
+    const db = await Client.withKeyInfo({
+        key: TEXTILE_USER_API_KEY,
+        secret: TEXTILE_USER_API_SECRET,
+    });
     return db;
 };
 

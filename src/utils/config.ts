@@ -106,7 +106,6 @@ const DOTWALLET_APP_ID = process.env.DOTWALLET_APP_ID;
 /** Textile */
 const TEXTILE_USER_API_KEY = process.env.TEXTILE_USER_API_KEY;
 const TEXTILE_USER_API_SECRET = process.env.TEXTILE_USER_API_SECRET;
-const TEXTILE_API = 'https://api.textile.io:3447';
 
 export {
     PORT,
@@ -122,7 +121,6 @@ export {
     CLIENT_CALLBACK,
     TEXTILE_USER_API_KEY,
     TEXTILE_USER_API_SECRET,
-    TEXTILE_API,
     DOTWALLET_SECRET,
     DOTWALLET_APP_ID,
 };
